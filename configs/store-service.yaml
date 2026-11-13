@@ -1,0 +1,58 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: boot-store-jdbc
+  mvc:
+    view:
+      prefix: /WEB-INF/jsp/
+      suffix: .jsp
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+management:
+  info:
+    env:
+      enabled: true
+    app:
+      name: My Application
+      version: 1.0.0
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,httpexchanges
+
+  endpoint:
+      health:
+        show-details: always
+---
+# ==========================================
+# Profile 1: Local Development
+# ==========================================
+spring:
+  config:
+    activate:
+      on-profile: local
+datasource:
+  mysql:
+    url: jdbc:mysql://localhost:3306/developer_database?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    driverClassName: com.mysql.cj.jdbc.Driver
+
+---
+# ==========================================
+# Profile 2: Kubernetes (GKE + Cloud SQL Proxy)
+# ==========================================
+spring:
+  config:
+    activate:
+      on-profile: k8s
+datasource:
+  mysql:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driverClassName: ${SPRING_DATASOURCE_DRIVER}
